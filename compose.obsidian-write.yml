@@ -1,0 +1,8 @@
+# Explicit write opt-in. Do not combine with compose.obsidian.yml.
+services:
+  agent:
+    volumes:
+      - type: bind
+        source: ${OBSIDIAN_VAULT_PATH:?Set OBSIDIAN_VAULT_PATH}
+        target: /vault
+        read_only: false

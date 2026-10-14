@@ -1,0 +1,23 @@
+# Optional: daemon runs as root inside the container, SSH shells as dev.
+services:
+  agent:
+    user: "0:0"
+    command: ["sshd"]
+    environment:
+      OAUTH_CALLBACK_PORT: ${OAUTH_CALLBACK_PORT:-8765}
+    volumes:
+      - type: bind
+        source: ${SSH_AUTHORIZED_KEYS_FILE:?Set SSH_AUTHORIZED_KEYS_FILE to an existing authorized_keys file}
+        target: /home/dev/.ssh/authorized_keys
+        read_only: true
+      - ssh_hostkeys:/etc/ssh/dockercat-hostkeys
+    ports:
+      - "${SSH_BIND_ADDRESS:-127.0.0.1}:${SSH_PORT:-2222}:2222"
+    cap_add:
+      - SETUID
+      - SETGID
+      - CHOWN
+      - DAC_OVERRIDE
+      - NET_BIND_SERVICE
+volumes:
+  ssh_hostkeys:
