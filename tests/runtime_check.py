@@ -163,8 +163,9 @@ def ssh_checks(directory):
             "tmux -L dockercat-review-pty new-session -d -s review",
             "tmux -L dockercat-review-pty has-session -t review",
             'printf "DCA_TMUX_%s\\n" "$(tmux -L dockercat-review-pty display-message -p -t review \u0027#S\u0027)"',
-            "tmux -L dockercat-review-pty kill-server",
-            "exit",
+            "tmux -L dockercat-review-pty kill-server || true",
+            'printf "DCA_PTY_DONE\\n"',
+            "exit 0",
             "",
         ])
         pty = run(*interactive, check=False, input_text=commands)
@@ -173,6 +174,7 @@ def ssh_checks(directory):
             f"PTY login did not start as dev: {pty.stdout}"
         )
         assert "DCA_TMUX_review" in pty.stdout, "tmux failed in interactive SSH"
+        assert "DCA_PTY_DONE" in pty.stdout, "interactive SSH did not complete the shell script"
         assert run(*client(wrong_key), "true", check=False).returncode != 0
         no_key = client()
         del no_key[3:5]
