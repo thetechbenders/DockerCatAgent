@@ -46,7 +46,7 @@ Give each issue a concrete outcome, testable criteria, constraints and meaningfu
 
 ## Project and repository administration limitations
 
-**Project #2 is the owner-designated canonical DockerCatAgent planning board.** Use that project; do not create another. Its organization URL is expected to be https://github.com/orgs/thetechbenders/projects/2; the exact URL/owner is awaiting confirmation. Reading organization Project #2 and the repository-linked project currently fails with `Resource not accessible by integration`. This prevents inspecting fields/items or safely changing the board through the available identity. No board changes are claimed.
+**[Techbenders Project #2](https://github.com/orgs/thetechbenders/projects/2/views/1) is the owner-designated canonical DockerCatAgent planning board.** This exact URL was supplied by a Techbenders owner; its fields/items were **not** independently accessible through the GitHub integration. Use this project; do not create another. Reading Project #2 through the connected integration has failed with `Resource not accessible by integration`, preventing field/item inspection or safe modifications using that identity. No board changes are claimed.
 
 Earlier listings exposed no accessible equivalent project, and an attempted creation was denied with `Resource not accessible by integration (createProjectV2)`; no duplicate board was created. Issues, labels and milestones remain organized while board access is unavailable.
 

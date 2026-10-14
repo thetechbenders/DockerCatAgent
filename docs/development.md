@@ -22,8 +22,9 @@ Use the [contribution guide](../CONTRIBUTING.md), live issues and the [roadmap](
 From the complete checkout:
 
 ```sh
-for script in scripts/*.sh .github/*.sh; do bash -n "$script"; done
+for script in scripts/*.sh .github/*.sh tests/*.sh; do bash -n "$script"; done
 python3 tests/static_check.py
+bash tests/signing-key-check.sh
 docker compose -f compose.yml config -q
 SSH_AUTHORIZED_KEYS_FILE="$PWD/.env.example" \
   docker compose -f compose.yml -f compose.ssh.yml config -q
@@ -48,7 +49,7 @@ docker compose up -d
 docker compose exec -T -u dev agent /usr/local/bin/dockercat-smoke
 ```
 
-Run `python3 tests/runtime_check.py` after building `dockercatagent:local` to exercise the disposable runtime regression suite. It creates unique temporary Compose projects and synthetic key/vault/state fixtures without real accounts. Use a disposable Compose project for any additional fixtures so a test cannot overwrite an operator's home or workspace. Verify base exposure, mounted volume continuity and optional-profile runtime behavior. The [CI workflow](../.github/workflows/ci.yml) is the authority for current automated commands; [audit evidence](foundation-audit.md) records their disposition.
+Run `python3 -u tests/runtime_check.py` after building `dockercatagent:local` to exercise the disposable runtime regression suite. The commands in this guide mirror the CI static and runtime jobs; check [the workflow](../.github/workflows/ci.yml) for subsequent changes. It creates unique temporary Compose projects and synthetic key/vault/state fixtures without real accounts. Use a disposable Compose project for any additional fixtures so a test cannot overwrite an operator's home or workspace. Verify base exposure, mounted volume continuity and optional-profile runtime behavior. The [CI workflow](../.github/workflows/ci.yml) is the authority for current automated commands; [audit evidence](foundation-audit.md) records their disposition.
 
 Do not inject personal credentials into CI. A synthetic `.claude` fixture tests volume placement, not a live token. Account-holder acceptance remains in the relevant issue.
 

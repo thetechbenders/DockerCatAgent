@@ -27,8 +27,9 @@ Use your established Git identity. Keep commit messages factual; do not append p
 Run the lightweight baseline checks from the repository root:
 
 ```sh
-for script in scripts/*.sh .github/*.sh; do bash -n "$script"; done
+for script in scripts/*.sh .github/*.sh tests/*.sh; do bash -n "$script"; done
 python3 tests/static_check.py
+bash tests/signing-key-check.sh
 docker compose -f compose.yml config -q
 ```
 
@@ -41,7 +42,7 @@ docker compose exec -T -u dev agent dockercat-smoke
 docker compose down
 ```
 
-The last command preserves state volumes. Use disposable test state for recreation, SSH, and mount tests; never delete an operator's volumes to run a check. See [development](docs/development.md) and [validation](docs/validation.md) for overlay configuration and runtime regression commands. Portainer builds also need the Dockerfile, scripts, and configuration from the complete checkout.
+After building the image, `python3 -u tests/runtime_check.py` runs the same credential-free disposable runtime acceptance suite as CI. Run it only on a trusted Docker host; it creates temporary test projects and cleans up **those test volumes**, not your normal project. The last command above preserves state volumes. Use disposable test state for recreation, SSH, and mount tests; never delete an operator's volumes to run a check. See [development](docs/development.md) and [validation](docs/validation.md) for overlay configuration and runtime regression commands. Portainer builds also need the Dockerfile, scripts, and configuration from the complete checkout.
 
 Report evidence accurately:
 
