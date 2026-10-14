@@ -1,6 +1,6 @@
 # GitHub project management
 
-GitHub Issues track outcomes, [ROADMAP.md](../ROADMAP.md) sets scope and sequencing, and [wiki/](../wiki/Home.md) contains reviewed-source wiki drafts. Milestones are capability goals, with no invented versions or due dates. Issue counts are not a measure of engineering progress.
+GitHub Issues track outcomes, [ROADMAP.md](../ROADMAP.md) sets scope and sequencing, and [wiki/](../wiki/Home.md) contains reviewed navigation source for the [official GitHub Wiki](https://github.com/thetechbenders/DockerCatAgent/wiki). Milestones are capability goals, with no invented versions or due dates. Issue counts are not a measure of engineering progress.
 
 ## Applied taxonomy
 
@@ -58,4 +58,4 @@ Repository description/topics editing and branch-protection inspection were also
 
 Use feature branches and draft PRs. Never push directly to main, force-push or merge without explicit authorization. Validate the exact current head and inspect warnings/failures. The [foundation audit](foundation-audit.md) records what synthetic checks establish and what remains manual. No license, release, image publication or production deployment is implied by CI.
 
-Wiki is enabled, but source pages are **prepared only**. The [publishing procedure](wiki-publishing.md) describes how an approved source commit can later be synchronized to the separate wiki Git repository without competing documentation authorities. Do not publish an unreviewed wiki independently of its PR.
+The official wiki publishes 11 reviewed Markdown files from [PR #23](https://github.com/thetechbenders/DockerCatAgent/pull/23). The [publishing procedure and evidence](wiki-publishing.md) record the source and wiki commits and define future synchronization without competing documentation authorities. Do not publish unreviewed wiki changes independently of their source PR.

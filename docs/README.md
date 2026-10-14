@@ -1,6 +1,6 @@
 # Documentation guide
 
-The guides in `docs/` are the canonical operator and development documentation, reviewed with code. [`wiki/`](../wiki/Home.md) contains concise navigation pages prepared for a future reviewed GitHub Wiki synchronization. Prepared wiki files are not evidence of published wiki content.
+The guides in `docs/` are the canonical operator and development documentation, reviewed with code. The [official GitHub Wiki](https://github.com/thetechbenders/DockerCatAgent/wiki) publishes concise navigation from [`wiki/`](../wiki/Home.md), with canonical guide links pinned to its reviewed source commit. See [publication evidence and the update procedure](wiki-publishing.md); subsequent source edits require another reviewed synchronization.
 
 | Reader goal | Guide |
 | --- | --- |
