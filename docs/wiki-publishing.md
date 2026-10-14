@@ -52,12 +52,16 @@ An authenticated maintainer with wiki write permission can clone it to a separat
 git clone https://github.com/thetechbenders/DockerCatAgent.wiki.git ../DockerCatAgent.wiki
 ```
 
-If the clone already exists, inspect its status and fetch current remote state before a non-destructive fast-forward update. Check the remote default branch rather than assuming it matches the code repository's `main`. Read current pages and resolve content conflicts. Copy only the prepared page files after that review; do not use a deletion-based mirror.
+If the clone already exists, inspect its status and fetch current remote state before a non-destructive fast-forward update. Check the remote default branch rather than assuming it matches the code repository's `main`. Read current pages and resolve content conflicts. Begin with a clean wiki worktree and index. Copy only the prepared page files after that review; do not use a deletion-based mirror. Stage only those exported filenames so the reviewed diff includes newly added pages as well as existing pages.
 
 ```sh
 cp ./wiki-export/*.md ../DockerCatAgent.wiki/
-git -C ../DockerCatAgent.wiki diff --check
-git -C ../DockerCatAgent.wiki diff
+for page in ./wiki-export/*.md; do
+  git -C ../DockerCatAgent.wiki add -- "${page##*/}"
+done
+git -C ../DockerCatAgent.wiki diff --cached --check
+git -C ../DockerCatAgent.wiki diff --cached --stat
+git -C ../DockerCatAgent.wiki diff --cached
 ```
 
 The wiki repository has no ordinary source PR review gate. Require the source PR and export diff to be reviewed before any wiki commit/push. Once separately authorized, commit using the established identity with a message recording the full source SHA, push without force, then read back the live Home/sidebar/pages and canonical document links. If permission or source approval is missing, stop at the prepared export and report that limitation.
