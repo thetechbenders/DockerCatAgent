@@ -14,7 +14,7 @@ Use the [contribution guide](../CONTRIBUTING.md), live issues and the [roadmap](
 | `.github/workflows/ci.yml` | Foundation static/build/runtime gate |
 | `.github/` | Templates and declarative governance metadata |
 | `docs/` | Canonical version-controlled operator/developer guides |
-| `wiki/` | Reviewed-source navigation pages prepared for future synchronization |
+| `wiki/` | Reviewed navigation source for the official GitHub Wiki; updates require separate synchronization |
 | `ROADMAP.md` | Milestone scopes, dependencies and acceptance gates |
 
 ## Local static checks

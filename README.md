@@ -71,7 +71,7 @@ Start with the [documentation index](docs/README.md). The guides cover:
 | Diagnose problems without exposing private data | [Troubleshooting](docs/troubleshooting.md) |
 | Build, test, and contribute | [Development](docs/development.md), [contributing](CONTRIBUTING.md) |
 
-The [wiki landing page](wiki/Home.md) is prepared source for a future reviewed GitHub Wiki publication. It links to canonical repository guides; it has not been published separately by this work. See the [publication procedure](docs/wiki-publishing.md).
+The [official GitHub Wiki](https://github.com/thetechbenders/DockerCatAgent/wiki) provides reviewed navigation to canonical repository guides. Its links are pinned to the published source commit. The [wiki source](wiki/Home.md), [publication evidence and update procedure](docs/wiki-publishing.md) remain version-controlled in this repository.
 
 ## Scope and support
 
