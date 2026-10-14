@@ -1,0 +1,46 @@
+name: Validation evidence
+description: Record a bounded account-holder, hardware, or runtime acceptance test
+labels: ["type: testing", "status: needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Prefer updating the existing canonical validation issue. Open a new ticket only for an untracked requirement. Use disposable data and redact credentials, private keys, personal paths, account identifiers, and OAuth callback URLs."
+  - type: input
+    id: scope
+    attributes:
+      label: Outcome and canonical issue
+      description: What requirement does this validate? Link existing tracking when relevant.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Tested source and sanitized environment
+      description: Commit, architecture, Docker/Compose and Claude versions, overlays, and relevant host/client type.
+    validations:
+      required: true
+  - type: dropdown
+    id: evidence_type
+    attributes:
+      label: Evidence type
+      options:
+        - Static check
+        - Synthetic runtime check with disposable state
+        - Manual account-holder workflow
+        - Manual hardware, deployment, or remote-client workflow
+    validations:
+      required: true
+  - type: textarea
+    id: procedure
+    attributes:
+      label: Procedure and acceptance criteria
+      description: Exact safe commands or manual steps, expected results, and cleanup that preserves valuable operator state.
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Observed result and remaining limits
+      description: What passed, failed, or remains untested? A synthetic success does not establish live authentication or a different hardware platform.
+    validations:
+      required: true

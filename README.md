@@ -1,32 +1,82 @@
 # DockerCatAgent
 
-**Portable, self-hosted Claude Code CLI development environments.**
+**A self-hosted Claude Code terminal environment with persistent files and optional SSH access.**
 
-A Docker/Compose toolkit for running Claude Code with a persistent workspace, terminal sessions, optional key-only SSH access, and optional Obsidian/Mem integrations. Designed for ordinary Linux AMD64/ARM64 Docker hosts, not a particular NAS, network, or user.
+[![Foundation CI](https://github.com/thetechbenders/DockerCatAgent/actions/workflows/ci.yml/badge.svg?branch=feat%2Fclaude-docker-foundation)](https://github.com/thetechbenders/DockerCatAgent/actions/workflows/ci.yml?query=branch%3Afeat%2Fclaude-docker-foundation)
 
-> **Status: foundation under development.** The feature branch is not a released or production-validated environment. Docker/SSH/OAuth validation results must be reported before calling it ready.
+DockerCatAgent packages Claude Code, Git, tmux, and common development tools in one Debian-based Docker container. Docker Compose defines a non-root development environment with named volumes for the workspace and user home. SSH, Obsidian vault access, and Mem MCP are optional.
 
-## Core promises
-- Docker Compose is authoritative; Portainer is supported through a complete repository build context or a locally prebuilt image.
-- Claude Code comes from an Anthropic-supported distribution, never a third-party repackaged binary.
-- Non-root interactive development account and persistent workspace/user state.
-- Optional SSH with public-key authentication, localhost default, VPN recommendation, and narrowly restricted OAuth forwarding.
-- Optional read-only Obsidian vault mounts; write access requires explicit opt-in.
-- Optional remote Mem MCP; users configure and authorize their own account, with no bundled personal notes.
-- No public network exposure, Docker socket, privileged container, or broad host mount by default.
+> **Development status:** the foundation is under review in [draft PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1), targeting `main`. The quick start below uses that review branch. There is no approved release, published container image, or production acceptance. CI results cover the checks recorded for their exact commit; they do not establish successful account authentication or deployment on your host.
 
-## Navigation
-- [Roadmap and delivery stages](ROADMAP.md)
-- [Architecture and decisions](docs/architecture.md)
-- [Security and privacy model](docs/security.md)
-- [Installation and operational design](docs/installation.md)
-- [Remote access and tmux](docs/remote-access.md)
-- [Obsidian integration](docs/obsidian-integration.md)
-- [Mem MCP integration](docs/mem-integration.md)
-- [Wiki publishing plan](wiki/Home.md)
-- [Contribution guide](CONTRIBUTING.md)
+The current foundation includes:
 
-## Development status
-The planning and documentation branch is the working reference while the functional image and tests are being reviewed. Refer to the active pull request and CI evidence for exact capabilities; proposed features are not shipped features.
+- Claude Code installation from its upstream signed Debian package channel.
+- A `dev` account, persistent `/workspace` and `/home/dev`, configurable resource limits, and a CLI health check.
+- No published ports, privileged mode, host Docker socket, or host-directory mounts in the default Compose configuration.
+- An optional key-only SSH overlay, a loopback host binding, persistent SSH host keys, and forwarding restricted to a selected OAuth callback destination.
+- Separate read-only and explicitly writable Obsidian vault overlays.
+- Documentation for user-configured Mem MCP, with no bundled account, notes, or credentials.
 
-Techbenders maintains DockerCatAgent. It is independent of Anthropic, Mem, and Obsidian. **No repository license has been chosen**. Public source visibility is not the same as permission to redistribute.
+Account-backed authentication, ARM64 hardware acceptance, and Portainer deployment remain explicit validation work. See the [foundation audit](docs/foundation-audit.md), [validation guide](docs/validation.md), and [roadmap](ROADMAP.md) for evidence and acceptance gates.
+
+## Try the foundation branch
+
+Use a Linux Docker Engine host with Docker Compose v2, outbound HTTPS, and enough disk and memory for your work. AMD64 is the CI reference architecture; ARM64 acceptance is tracked in [#2](https://github.com/thetechbenders/DockerCatAgent/issues/2). You need your own supported Claude account or API access to use Claude Code.
+
+```sh
+git clone --branch feat/claude-docker-foundation https://github.com/thetechbenders/DockerCatAgent.git
+cd DockerCatAgent
+cp .env.example .env
+docker compose config -q
+docker compose build --pull
+docker compose up -d
+docker compose exec -u dev agent bash
+```
+
+Inside the container:
+
+```sh
+claude --version
+git --version
+tmux -V
+tmux new-session -A -s work
+claude
+```
+
+Authenticate using Claude Code's interactive flow. Remote browser callbacks need the setup described in [first-run and remote authentication](docs/remote-access.md); live subscription, API-key, and Mem authentication require separate account-holder tests.
+
+Work in `/workspace`. Files and account configuration in `/home/dev` persist when the container is recreated with the same Compose project and volumes. Container recreation ends running Claude and tmux processes. `docker compose down` preserves the volumes; **`docker compose down -v` deletes them**, including authentication state. Protect backups of the user home as credential-bearing data.
+
+To rebuild after reviewing source or upstream updates:
+
+```sh
+docker compose build --pull
+docker compose up -d --force-recreate
+```
+
+Record the source commit and installed Claude version when reporting results. Channels and base-image tags can change between builds; bit-for-bit reproducibility is future work. Read the [maintenance guide](docs/maintenance.md) before updating valuable state.
+
+## Documentation
+
+Start with the [documentation index](docs/README.md). The guides cover:
+
+| Task | Guide |
+| --- | --- |
+| Install, authenticate, and use Portainer with a complete build context | [Installation](docs/installation.md) |
+| Understand identities, volumes, filesystem boundaries, and health checks | [Architecture](docs/architecture.md) |
+| Configure SSH, callback forwarding, tmux, and remote clients | [Remote operation](docs/remote-access.md) |
+| Mount an Obsidian vault safely | [Obsidian](docs/obsidian-integration.md) |
+| Configure optional remote Mem MCP | [Mem integration](docs/mem-integration.md) |
+| Maintain state, update, and plan recovery | [Maintenance](docs/maintenance.md) |
+| Diagnose problems without exposing private data | [Troubleshooting](docs/troubleshooting.md) |
+| Build, test, and contribute | [Development](docs/development.md), [contributing](CONTRIBUTING.md) |
+
+The [wiki landing page](wiki/Home.md) is prepared source for a future reviewed GitHub Wiki publication. It links to canonical repository guides; it has not been published separately by this work. See the [publication procedure](docs/wiki-publishing.md).
+
+## Scope and support
+
+DockerCatAgent is a terminal environment, maintained by Techbenders and independent of Anthropic, Mem, and Obsidian. It provides no hosted accounts, web service, orchestration platform, or automatic deployment. Optional integrations use your own accounts and authorization. Container isolation and read-only mounts do not prevent permitted data from being disclosed to an external provider.
+
+Use [issues](https://github.com/thetechbenders/DockerCatAgent/issues) for reproducible defects and scoped proposals. Include sanitized environment details and the source commit; keep secrets and private account data out of reports. Report vulnerabilities through the [security policy](SECURITY.md).
+
+**No software license has been approved.** Public visibility does not grant redistribution rights. The owner decision and third-party notice policy are tracked in [#6](https://github.com/thetechbenders/DockerCatAgent/issues/6).

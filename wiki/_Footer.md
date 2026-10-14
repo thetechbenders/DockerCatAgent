@@ -1,0 +1,1 @@
+Procedures live in the reviewed [canonical repository guides](../docs/README.md). Wiki pages provide navigation and do not add runtime capabilities. [Security reporting](../SECURITY.md) · [Roadmap](../ROADMAP.md)
