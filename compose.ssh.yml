@@ -10,6 +10,8 @@ services:
         source: ${SSH_AUTHORIZED_KEYS_FILE:?Set SSH_AUTHORIZED_KEYS_FILE to an existing authorized_keys file}
         target: /home/dev/.ssh/authorized_keys
         read_only: true
+        bind:
+          create_host_path: false
       - ssh_hostkeys:/etc/ssh/dockercat-hostkeys
     ports:
       - "${SSH_BIND_ADDRESS:-127.0.0.1}:${SSH_PORT:-2222}:2222"
@@ -17,6 +19,8 @@ services:
       - SETUID
       - SETGID
       - CHOWN
+      - FOWNER
+      - SYS_CHROOT
       - DAC_OVERRIDE
       - NET_BIND_SERVICE
 volumes:

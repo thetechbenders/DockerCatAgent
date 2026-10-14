@@ -8,8 +8,8 @@ if [[ "$(id -u)" -ne 0 ]]; then
   exit 1
 fi
 port="${OAUTH_CALLBACK_PORT:-8765}"
-if [[ ! "$port" =~ ^[0-9]+$ ]] || (( port < 1024 || port > 65535 )); then
-  echo "OAUTH_CALLBACK_PORT must be numeric, 1024..65535" >&2
+if [[ ! "$port" =~ ^[1-9][0-9]{3,4}$ ]] || (( port < 1024 || port > 65535 )); then
+  echo "OAUTH_CALLBACK_PORT must be decimal, 1024..65535, without leading zeroes" >&2
   exit 2
 fi
 keys=/etc/ssh/dockercat-hostkeys
@@ -20,8 +20,8 @@ if [[ ! -f "$keys/ssh_host_ed25519_key" ]]; then
 fi
 chmod 0600 "$keys/ssh_host_ed25519_key"
 chmod 0644 "$keys/ssh_host_ed25519_key.pub"
-if [[ ! -s /home/dev/.ssh/authorized_keys ]]; then
-  echo "SSH authorized_keys is absent or empty" >&2
+if [[ ! -f /home/dev/.ssh/authorized_keys || ! -s /home/dev/.ssh/authorized_keys ]]; then
+  echo "SSH authorized_keys must be a nonempty regular file" >&2
   exit 3
 fi
 chmod 0700 /home/dev/.ssh

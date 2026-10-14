@@ -32,6 +32,10 @@ def check() -> None:
     for required in ("PasswordAuthentication no", "KbdInteractiveAuthentication no", "PermitRootLogin no", "PubkeyAuthentication yes", "AllowUsers dev", "AllowTcpForwarding local", "GatewayPorts no", "PermitTunnel no", "PermitOpen localhost:@OAUTH_CALLBACK_PORT@ 127.0.0.1:@OAUTH_CALLBACK_PORT@"):
         assert required in sshd, f"SSH policy missing: {required}"
     assert '(( port < 1024 || port > 65535 ))' in entry
+    assert '^[1-9][0-9]{3,4}$' in entry, "bound decimal port parsing before shell arithmetic"
+    assert '! -f /home/dev/.ssh/authorized_keys' in entry
+    for overlay in (ssh, ro, rw):
+        assert "create_host_path: false" in overlay, "bind sources must already exist"
     assert "gpg --batch --show-keys --with-colons" in dockerfile
     assert "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" in dockerfile
     assert "USER dev" in dockerfile

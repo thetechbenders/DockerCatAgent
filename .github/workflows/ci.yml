@@ -11,9 +11,15 @@ jobs:
   static:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node 24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - name: Validate shell syntax
-        run: bash -n scripts/*.sh
+        run: |
+          for script in scripts/*.sh .github/*.sh; do
+            bash -n "$script"
+          done
       - name: Static policy tests
         run: python3 tests/static_check.py
       - name: Compose configuration
@@ -22,27 +28,17 @@ jobs:
           SSH_AUTHORIZED_KEYS_FILE="$PWD/.env.example" docker compose -f compose.yml -f compose.ssh.yml config -q
           OBSIDIAN_VAULT_PATH="$PWD/wiki" docker compose -f compose.yml -f compose.obsidian.yml config -q
           OBSIDIAN_VAULT_PATH="$PWD/wiki" docker compose -f compose.yml -f compose.obsidian-write.yml config -q
+          docker compose -f compose.portainer.yml config -q
   build-smoke:
     runs-on: ubuntu-latest
     needs: static
     timeout-minutes: 25
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1, Node 24
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          persist-credentials: false
       - name: Build image
         run: docker compose build --pull
-      - name: Start container
-        run: docker compose up -d
-      - name: Basic smoke
-        run: docker compose exec -T -u dev agent bash -c 'claude --version && git --version && tmux -V && test -w /workspace && test -w /home/dev'
-      - name: Volume persistence across recreation
-        run: |
-          docker compose exec -T -u dev agent sh -c 'printf ok > /workspace/.persist-probe && printf ok > /home/dev/.persist-probe'
-          docker compose up -d --force-recreate
-          docker compose exec -T -u dev agent sh -c 'test "$(cat /workspace/.persist-probe)" = ok && test "$(cat /home/dev/.persist-probe)" = ok'
-      - name: Default exposure checks
-        run: |
-          test -z "$(docker compose port agent 2222 2>/dev/null || true)"
-          docker inspect "$(docker compose ps -q agent)" --format '{{json .HostConfig.Binds}}' | grep -v '/var/run/docker.sock'
-      - name: Shutdown (preserve volumes)
-        if: always()
-        run: docker compose down
+      - name: Credential-free runtime regressions
+        run: python3 -u tests/runtime_check.py
