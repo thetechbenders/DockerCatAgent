@@ -43,7 +43,7 @@ tmux new-session -A -s work
 claude
 ```
 
-Authenticate using Claude Code's interactive flow. Remote browser callbacks need the setup described in [first-run and remote authentication](docs/remote-access.md); live subscription, API-key, and Mem authentication require separate account-holder tests.
+Authenticate using Claude Code's interactive flow. Claude account login may use a paste-code browser flow that needs no tunnel. Some optional MCP-provider OAuth flows use a local callback; configure the [restricted SSH forwarding](docs/remote-access.md#restricted-oauth-callback-forwarding) **only when that flow requires it**. Live subscription, API-key, and Mem authentication still require separate account-holder tests.
 
 Work in `/workspace`. Files and account configuration in `/home/dev` persist when the container is recreated with the same Compose project and volumes. Container recreation ends running Claude and tmux processes. `docker compose down` preserves the volumes; **`docker compose down -v` deletes them**, including authentication state. Protect backups of the user home as credential-bearing data.
 

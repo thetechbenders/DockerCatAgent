@@ -40,7 +40,7 @@ docker compose -f compose.yml -f compose.ssh.yml exec -T -u root agent \
   ssh-keygen -lf /etc/ssh/dockercat-hostkeys/ssh_host_ed25519_key.pub
 ```
 
-Recreate the container and confirm the fingerprint stays the same. If a persisted host private key exists but its `.pub` sidecar is missing, startup recreates the public key without changing the server identity. If a client reports changed identity, stop and confirm the Docker endpoint, Compose project and actual key before altering `known_hosts`. Do not automatically suppress host-key checking. Replacing authorized public keys changes who can log in; it is separate from rotating the server's host key. Make changes through the protected host file, verify new access, and retire old access deliberately.
+Recreate the container and confirm the fingerprint stays the same. If a persisted host private key exists but its `.pub` sidecar is missing or empty, startup restores safe private-key permissions first, reconstructs the public key atomically, and preserves the server identity. If a client reports changed identity, stop and confirm the Docker endpoint, Compose project and actual key before altering `known_hosts`. Do not automatically suppress host-key checking. Replacing authorized public keys changes who can log in; it is separate from rotating the server's host key. Make changes through the protected host file, verify new access, and retire old access deliberately.
 
 ## VPN and remote clients
 

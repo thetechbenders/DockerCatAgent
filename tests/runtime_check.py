@@ -252,10 +252,25 @@ def ssh_checks(directory):
         host_identity = compose("exec", "-T", "agent", "cat", key_path).stdout
         compose("up", "-d", "--no-build", "--force-recreate")
         assert compose("exec", "-T", "agent", "cat", key_path).stdout == host_identity
-        # A missing public sidecar must be recovered from the same private key.
+        # A restored private key may be too permissive for ssh-keygen -y.
+        # Recovery must succeed on the first recreation, atomically and without
+        # changing the server's identity or leaving a zero-byte sidecar.
+        private_key_path = key_path.removesuffix(".pub")
+        compose("exec", "-T", "-u", "root", "agent", "chmod", "0644", private_key_path)
         compose("exec", "-T", "-u", "root", "agent", "rm", key_path)
         compose("up", "-d", "--no-build", "--force-recreate")
         assert compose("exec", "-T", "agent", "cat", key_path).stdout == host_identity
+        assert compose("exec", "-T", "agent", "stat", "-c", "%a", private_key_path).stdout.strip() == "600"
+        compose("exec", "-T", "-u", "root", "agent", "test", "-s", key_path)
+        # An empty sidecar from an earlier failed start is also recoverable.
+        compose("exec", "-T", "-u", "root", "agent", "sh", "-c", f": > {key_path}")
+        compose("up", "-d", "--no-build", "--force-recreate")
+        assert compose("exec", "-T", "agent", "cat", key_path).stdout == host_identity
+        compose("exec", "-T", "-u", "root", "agent", "test", "-s", key_path)
+        # Atomic generation leaves no temporary files behind.
+        compose("exec", "-T", "agent", "sh", "-c",
+                "test -z \"$(find /etc/ssh/dockercat-hostkeys -maxdepth 1 "
+                "-name '.ssh_host_ed25519_key.pub.*' -print -quit)\"")
         # Exercise a real local callback-shaped connection without provider credentials.
         compose("exec", "-T", "-u", "dev", "agent", "sh", "-c", "printf callback-probe > /workspace/callback-probe")
         compose("exec", "-d", "-u", "dev", "agent", "python3", "-m", "http.server", "8765", "--bind", "127.0.0.1", "--directory", "/workspace")

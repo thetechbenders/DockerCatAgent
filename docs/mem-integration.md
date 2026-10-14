@@ -19,7 +19,7 @@ The options, including a fixed OAuth callback port, are described in [Claude's o
 
 ## Browser and headless OAuth
 
-Launch `claude`, use `/mcp`, select the server and follow its authentication prompts. When the browser is on a separate client, first open the [restricted SSH callback tunnel](remote-access.md#restricted-oauth-callback-forwarding) at port 8765. The configured callback port, tunnel destination and `OAUTH_CALLBACK_PORT` must agree. Do not change the grant or redirect URI blindly if the provider rejects the flow.
+Launch `claude`, use `/mcp`, select the server and follow its authentication prompts. **A tunnel is conditional, not always required:** some CLI/provider versions offer a paste-redirect fallback, while others launch a local callback listener. If the browser is on a separate client **and the selected flow requires a callback**, open the [restricted SSH callback tunnel](remote-access.md#restricted-oauth-callback-forwarding) at port 8765. In that case, the configured callback port, tunnel destination and `OAUTH_CALLBACK_PORT` must agree. Do not change the grant or redirect URI blindly if the provider rejects the flow.
 
 The user's Claude login and Mem OAuth are separate. A green image build or a displayed server definition cannot validate either. An account holder must confirm OAuth completion, a permitted non-sensitive request, behavior after container recreation, and reauthentication after expiry/revocation. [Issue #21](https://github.com/thetechbenders/DockerCatAgent/issues/21) tracks the narrower live Mem/headless case; use current issue scope as the acceptance source.
 

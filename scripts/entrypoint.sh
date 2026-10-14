@@ -20,14 +20,31 @@ if [[ ! -e /run/utmp ]]; then
   install -o root -g utmp -m 0664 /dev/null /run/utmp
 fi
 chmod 0700 "$keys"
-if [[ ! -f "$keys/ssh_host_ed25519_key" ]]; then
-  (umask 077; ssh-keygen -q -t ed25519 -N '' -f "$keys/ssh_host_ed25519_key")
-elif [[ ! -f "$keys/ssh_host_ed25519_key.pub" ]]; then
-  # Recover the public half without rotating the persistent private host identity.
-  ssh-keygen -y -f "$keys/ssh_host_ed25519_key" > "$keys/ssh_host_ed25519_key.pub"
+private_key="$keys/ssh_host_ed25519_key"
+public_key="$private_key.pub"
+if [[ ! -f "$private_key" ]]; then
+  (umask 077; ssh-keygen -q -t ed25519 -N '' -f "$private_key")
 fi
-chmod 0600 "$keys/ssh_host_ed25519_key"
-chmod 0644 "$keys/ssh_host_ed25519_key.pub"
+# A restored private key may have overly broad permissions. Fix those *before*
+# asking ssh-keygen to read it; ssh-keygen refuses modes such as 0644.
+chmod 0600 "$private_key"
+if [[ -L "$public_key" || ( -e "$public_key" && ! -f "$public_key" ) ]]; then
+  echo "SSH host public key must be a regular non-symlink file" >&2
+  exit 1
+fi
+if [[ ! -s "$public_key" ]]; then
+  # An absent or zero-byte sidecar must never be left as a broken artifact.
+  # Build alongside the target, then replace atomically after success.
+  temporary_public="$(mktemp "$keys/.ssh_host_ed25519_key.pub.XXXXXX")"
+  if ! ssh-keygen -y -f "$private_key" > "$temporary_public"; then
+    rm -f -- "$temporary_public"
+    echo "Unable to recover SSH host public key" >&2
+    exit 1
+  fi
+  chmod 0644 "$temporary_public"
+  mv -f -- "$temporary_public" "$public_key"
+fi
+chmod 0644 "$public_key"
 if [[ ! -f /home/dev/.ssh/authorized_keys || ! -s /home/dev/.ssh/authorized_keys ]]; then
   echo "SSH authorized_keys must be a nonempty regular file" >&2
   exit 3

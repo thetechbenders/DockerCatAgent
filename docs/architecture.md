@@ -34,7 +34,7 @@ Keep the same overlay set on `config`, `up`, `exec`, `stop` and `down` commands.
 
 `dev` has UID and GID 1000. Both the image and base Compose configuration select it. Host bind mounts must grant that identity appropriate access; container root in SSH mode does not make normal `dev` shells root. Avoid recursive changes to host data permissions to make a mount work.
 
-Default capabilities are dropped and `no-new-privileges` is enabled. SSH mode adds `SETUID`, `SETGID`, `CHOWN`, `DAC_OVERRIDE`, `FOWNER`, `SYS_CHROOT` and `NET_BIND_SERVICE` for startup, privilege separation and login under `dev`, and runs its daemon as root inside the container. Its additional privilege surface is tracked by [SSH boundary issue #9](https://github.com/thetechbenders/DockerCatAgent/issues/9) and requires explicit validation; it does not change the baseline service automatically.
+Default capabilities are dropped and `no-new-privileges` is enabled. SSH mode adds `AUDIT_WRITE`, `SETUID`, `SETGID`, `CHOWN`, `SYS_CHROOT` and `DAC_READ_SEARCH` for login accounting, privilege separation and key access under `dev`, and runs its daemon as root inside the container. The earlier `FOWNER`, `DAC_OVERRIDE` and `NET_BIND_SERVICE` grants were removed after runtime testing. Its additional privilege surface is tracked by [SSH boundary issue #9](https://github.com/thetechbenders/DockerCatAgent/issues/9) and requires explicit validation; it does not change the baseline service automatically.
 
 ```mermaid
 flowchart LR
