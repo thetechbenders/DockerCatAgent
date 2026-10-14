@@ -1,6 +1,6 @@
 # Developing and validating the foundation
 
-Use the [contribution guide](../CONTRIBUTING.md), live issues and the [roadmap](../ROADMAP.md) to select a focused task. The current foundation remains in draft PR #1. Code and documentation changes belong on reviewed branches; do not push to `main`, merge or publish a wiki/image as a side effect of development.
+Use the [contribution guide](../CONTRIBUTING.md), live issues and the [roadmap](../ROADMAP.md) to select a focused task. The initial foundation was merged through [PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1), while manual account and host acceptance remain open. Code and documentation changes belong on reviewed branches; do not push to `main`, merge or publish a wiki/image as a side effect of development.
 
 ## Source layout
 

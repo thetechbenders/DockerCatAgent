@@ -2,11 +2,11 @@
 
 **A self-hosted Claude Code terminal environment with persistent files and optional SSH access.**
 
-[![Foundation CI](https://github.com/thetechbenders/DockerCatAgent/actions/workflows/ci.yml/badge.svg?branch=feat%2Fclaude-docker-foundation)](https://github.com/thetechbenders/DockerCatAgent/actions/workflows/ci.yml?query=branch%3Afeat%2Fclaude-docker-foundation)
+[![Foundation CI](https://github.com/thetechbenders/DockerCatAgent/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/thetechbenders/DockerCatAgent/actions/workflows/ci.yml?query=branch%3Amain)
 
 DockerCatAgent packages Claude Code, Git, tmux, and common development tools in one Debian-based Docker container. Docker Compose defines a non-root development environment with named volumes for the workspace and user home. SSH, Obsidian vault access, and Mem MCP are optional.
 
-> **Development status:** the foundation is under review in [draft PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1), targeting `main`. The quick start below uses that review branch. There is no approved release, published container image, or production acceptance. CI results cover the checks recorded for their exact commit; they do not establish successful account authentication or deployment on your host.
+> **Development status:** the foundation source was merged into `main` through [PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1). There is **no approved release, published container image, or production acceptance**. CI only validates its tested commit; it does not prove live account authentication or host deployment.
 
 The current foundation includes:
 
@@ -19,12 +19,12 @@ The current foundation includes:
 
 Account-backed authentication, ARM64 hardware acceptance, and Portainer deployment remain explicit validation work. See the [foundation audit](docs/foundation-audit.md), [validation guide](docs/validation.md), and [roadmap](ROADMAP.md) for evidence and acceptance gates.
 
-## Try the foundation branch
+## Try the development foundation
 
 Use a Linux Docker Engine host with Docker Compose v2, outbound HTTPS, and enough disk and memory for your work. AMD64 is the CI reference architecture; ARM64 acceptance is tracked in [#2](https://github.com/thetechbenders/DockerCatAgent/issues/2). You need your own supported Claude account or API access to use Claude Code.
 
 ```sh
-git clone --branch feat/claude-docker-foundation https://github.com/thetechbenders/DockerCatAgent.git
+git clone --branch main https://github.com/thetechbenders/DockerCatAgent.git
 cd DockerCatAgent
 cp .env.example .env
 docker compose config -q

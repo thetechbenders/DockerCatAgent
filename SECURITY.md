@@ -1,6 +1,6 @@
 # Security and vulnerability reporting
 
-DockerCatAgent is pre-release and its foundation is under review. No stable release series or security response-time guarantee exists. Security work applies to the current source and foundation review branch; there is no supported production release to imply.
+DockerCatAgent is pre-release; the foundation source is merged into `main`. No stable release series or security response-time guarantee exists. There is no supported production release.
 
 ## Report a vulnerability privately
 

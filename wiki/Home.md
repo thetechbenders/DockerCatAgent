@@ -1,8 +1,8 @@
 # DockerCatAgent documentation
 
-DockerCatAgent is a self-hosted Claude Code terminal environment with persistent home/workspace and optional SSH, vault and MCP access. The foundation is under review; there is no published release, registry image or production approval.
+DockerCatAgent is a self-hosted Claude Code terminal environment with persistent home/workspace and optional SSH, vault and MCP access. The foundation source is on `main` following [PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1), but there is no published release, registry image or production approval.
 
-These pages are **reviewable wiki source**. GitHub Wiki was enabled with a placeholder Home when inspected on 2026-10-14; this prepared navigation set was not published during the audit. See the [synchronization procedure](../docs/wiki-publishing.md). The [repository guides](../docs/README.md) are the canonical instructions, and current [audit evidence](../docs/foundation-audit.md) separates implemented behavior from pending acceptance.
+These navigation pages are maintained as reviewed source in the repository and published separately under the [synchronization procedure](../docs/wiki-publishing.md). The [repository guides](../docs/README.md) remain canonical, and [validation evidence](../docs/validation.md) separates implemented features from pending account and host acceptance.
 
 ## Start here
 
@@ -26,6 +26,6 @@ These pages are **reviewable wiki source**. GitHub Wiki was enabled with a place
 
 ## Status and evidence
 
-A successful version check or CI build does not validate a real Claude/Mem account, ARM64 hardware, Portainer deployment, remote mobile client or recovery of credentials. Use the [acceptance matrix](../docs/validation.md), [GitHub issues](https://github.com/thetechbenders/DockerCatAgent/issues) and the draft [foundation PR](https://github.com/thetechbenders/DockerCatAgent/pull/1) for the exact scope.
+A successful version check or CI build does not validate a real Claude/Mem account, ARM64 hardware, Portainer deployment, remote mobile client or recovery of credentials. Use the [acceptance matrix](../docs/validation.md), [GitHub issues](https://github.com/thetechbenders/DockerCatAgent/issues) and the merged [foundation PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1) for implementation history and the remaining acceptance scope.
 
 No license has been selected. Owners must approve licensing and any later release/distribution. See [contributing](../CONTRIBUTING.md) and [private security reporting](../SECURITY.md).

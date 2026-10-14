@@ -4,16 +4,16 @@ This roadmap describes capability outcomes for the four GitHub milestones: **Fou
 
 ## Current reality
 
-The foundation is implemented on `feat/claude-docker-foundation` and remains under review in [draft PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1). Its presence on that branch is separate from acceptance or availability on `main`.
+The foundation source was merged into `main` through [PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1). Source availability is separate from account/host acceptance and release readiness.
 
-| Workstream | Present on the review branch | Evidence still required |
+| Workstream | Implemented on `main` | Evidence still required |
 | --- | --- | --- |
 | Container | Debian image, upstream Claude Code installation, Git/tmux/tooling, non-root default, resource limits, CLI health check | Clean build and runtime evidence for the exact reviewed commit; ARM64 host acceptance [#2](https://github.com/thetechbenders/DockerCatAgent/issues/2) |
 | State | Named volumes for the workspace and complete user home | Recreation/rebuild tests [#15](https://github.com/thetechbenders/DockerCatAgent/issues/15); real authenticated-state retention [#4](https://github.com/thetechbenders/DockerCatAgent/issues/4), [#19](https://github.com/thetechbenders/DockerCatAgent/issues/19), [#21](https://github.com/thetechbenders/DockerCatAgent/issues/21) |
 | SSH | Optional overlay, key-only `dev` login, restricted local forwarding, persistent host-key volume | Effective configuration and connection/denial tests [#3](https://github.com/thetechbenders/DockerCatAgent/issues/3); operator-specific remote client and network validation |
 | Integrations | Optional Obsidian overlays and user-local Mem setup guide | Mount/default/write-opt-in tests [#22](https://github.com/thetechbenders/DockerCatAgent/issues/22); consenting-account Mem OAuth [#21](https://github.com/thetechbenders/DockerCatAgent/issues/21) |
 | Deployment and docs | Compose build context, image-only Portainer configuration, repository guides and wiki source | Actual Portainer endpoint test [#5](https://github.com/thetechbenders/DockerCatAgent/issues/5); reviewed wiki publication [#14](https://github.com/thetechbenders/DockerCatAgent/issues/14) |
-| Distribution | Source under review; no approved release or registry image | Owner license and notice decision [#6](https://github.com/thetechbenders/DockerCatAgent/issues/6), review approval, and an explicit later release decision |
+| Distribution | Source merged to `main`; no approved release or registry image | Owner license and notice decision [#6](https://github.com/thetechbenders/DockerCatAgent/issues/6), review approval, and an explicit later release decision |
 
 The [audit report](docs/foundation-audit.md) and [validation guide](docs/validation.md) describe check results and their limits. This table names evidence obligations; a linked validation issue may close when that specific evidence is recorded without implying that every foundation gate has passed.
 
@@ -42,7 +42,7 @@ Foundation is complete only when:
 6. ARM64 hardware and an actual Portainer endpoint have acceptance evidence; supported architecture/deployment claims match those results. Until then, documentation limits support claims and the corresponding Foundation obligations remain open.
 7. Installation, security, maintenance, and contributor documentation match the tested implementation, and remaining manual obligations are visible in canonical issues.
 
-Passing this gate does not authorize a merge, release, registry push, or production deployment. The license decision [#6](https://github.com/thetechbenders/DockerCatAgent/issues/6) must precede approved redistribution; an explicit owner release decision is still required.
+Passing this gate does not authorize a release, registry push, or production deployment. The license decision [#6](https://github.com/thetechbenders/DockerCatAgent/issues/6) must precede approved redistribution; an explicit owner release decision is still required.
 
 ## Access & Reliability
 
@@ -113,4 +113,4 @@ Optional personal `CLAUDE.md` instructions are user-owned configuration, not an 
 - SSH, Obsidian, and Mem are optional. SSH host publication defaults to loopback.
 - The user home and workspace persist; running processes do not survive container recreation.
 - Repository source and wiki preparation remain reviewable through pull requests.
-- The owners have not selected a software license. No release, registry image, merge, or deployment is authorized by this roadmap.
+- The owners have not selected a software license. No release, registry image, or deployment is authorized by this roadmap.
