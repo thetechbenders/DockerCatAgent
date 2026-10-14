@@ -64,7 +64,7 @@ Use a generated disposable client key and no external account. Test effective da
 
 Requesting a forbidden forward is not enough: trigger an actual connection and assert rejection. `ssh -N` can stay alive with a local listener even when a later destination connection is denied. Record which controls were tested by network behavior and which by effective configuration only.
 
-[Issue #3](https://github.com/thetechbenders/DockerCatAgent/issues/3) tracks canonical SSH controls. A loopback fixture is not real VPN/mobile acceptance.
+[Issue #3](https://github.com/thetechbenders/DockerCatAgent/issues/3) tracks canonical SSH controls. A loopback fixture is not real VPN/mobile acceptance. Running a remote SSH command also cannot stand in for an interactive PTY login: require `ssh -tt` without a remote command, verify the non-root shell and start tmux.
 
 ## Optional vault scenarios
 

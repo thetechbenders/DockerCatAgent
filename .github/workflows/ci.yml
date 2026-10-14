@@ -17,11 +17,13 @@ jobs:
           persist-credentials: false
       - name: Validate shell syntax
         run: |
-          for script in scripts/*.sh .github/*.sh; do
+          for script in scripts/*.sh .github/*.sh tests/*.sh; do
             bash -n "$script"
           done
       - name: Static policy tests
         run: python3 tests/static_check.py
+      - name: Signing-key trust regression
+        run: bash tests/signing-key-check.sh
       - name: Compose configuration
         run: |
           docker compose -f compose.yml config -q

@@ -18,6 +18,9 @@ RUN --mount=type=secret,id=proxy_ca,target=/run/secrets/proxy_ca,mode=0444,requi
     rm -rf /var/lib/apt/lists/*; \
     rm -f /etc/ssh/ssh_host_*
 
+COPY scripts/verify-signing-key.sh /usr/local/bin/dockercat-verify-signing-key
+RUN chmod 0755 /usr/local/bin/dockercat-verify-signing-key
+
 # Verify Anthropic's published signing key before using its Debian repository.
 RUN --mount=type=secret,id=proxy_ca,target=/run/secrets/proxy_ca,mode=0444,required=false \
     set -eux; \
@@ -30,8 +33,8 @@ RUN --mount=type=secret,id=proxy_ca,target=/run/secrets/proxy_ca,mode=0444,requi
     install -d -m 0755 /etc/apt/keyrings; \
     curl -fsSL https://downloads.claude.ai/keys/claude-code.asc \
       -o /etc/apt/keyrings/claude-code.asc; \
-    actual="$(gpg --batch --show-keys --with-colons /etc/apt/keyrings/claude-code.asc | awk -F: '$1 == "fpr" { print $10; exit }')"; \
-    test "$actual" = "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE"; \
+    /usr/local/bin/dockercat-verify-signing-key \
+      /etc/apt/keyrings/claude-code.asc 31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE; \
     printf 'deb [signed-by=/etc/apt/keyrings/claude-code.asc] https://downloads.claude.ai/claude-code/apt/%s %s main\n' \
       "$CLAUDE_CHANNEL" "$CLAUDE_CHANNEL" > /etc/apt/sources.list.d/claude-code.list; \
     apt-get $apt_ca update; \

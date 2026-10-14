@@ -45,7 +45,7 @@ tmux new-session -A -s work
 claude
 ```
 
-The interactive shell should run as `dev` (UID/GID 1000), with writable `/workspace` and `/home/dev`. Follow Claude's displayed login instructions for your chosen account. Use [Anthropic's current setup guidance](https://code.claude.com/docs/en/setup) rather than pasting credentials into commands or issues. First-run trust prompts apply to the directory you enter; inspect a repository before granting trust.
+When using the optional SSH Compose override, specify `-u dev` explicitly for ordinary `docker compose exec` commands; otherwise its root-running daemon profile can create root-owned files in persistent user state. The interactive shell should run as `dev` (UID/GID 1000), with writable `/workspace` and `/home/dev`. Follow Claude's displayed login instructions for your chosen account. Use [Anthropic's current setup guidance](https://code.claude.com/docs/en/setup) rather than pasting credentials into commands or issues. First-run trust prompts apply to the directory you enter; inspect a repository before granting trust.
 
 For a first task, use a disposable repository or ask Claude to explain files in an empty workspace. Review requested tool permissions and generated changes before applying them. No real login or prompt response is implied by `claude --version` passing.
 

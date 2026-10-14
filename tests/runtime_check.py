@@ -18,8 +18,8 @@ import uuid
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def run(*args, check=True, env=None):
-    result = subprocess.run(args, cwd=ROOT, env=env, text=True,
+def run(*args, check=True, env=None, input_text=None):
+    result = subprocess.run(args, cwd=ROOT, env=env, input=input_text, text=True,
                             stdout=subprocess.PIPE, stderr=subprocess.PIPE, timeout=60)
     if check and result.returncode:
         raise AssertionError(f"{' '.join(args)} failed:\n{result.stdout}{result.stderr}")
@@ -152,6 +152,27 @@ def ssh_checks(directory):
         else:
             raise AssertionError(f"SSH login failed:\n{result.stderr}\n{compose('logs', '--no-color').stdout}")
         assert result.stdout.strip() == "1000", "SSH session is not dev"
+        # A remote command runs over an SSH exec channel. An actual interactive
+        # PTY login exercises a different sshd/audit path and was previously broken.
+        interactive = client()
+        interactive[-1:-1] = ["-tt"]
+        commands = "\n".join([
+            "set -e",
+            "test -t 0 && test -t 1",
+            'printf "DCA_PTY_UID_%s_%s\\n" "$(id -u)" "$(tty)"',
+            "tmux -L dockercat-review-pty new-session -d -s review",
+            "tmux -L dockercat-review-pty has-session -t review",
+            'printf "DCA_TMUX_%s\\n" "$(tmux -L dockercat-review-pty display-message -p -t review \u0027#S\u0027)"',
+            "tmux -L dockercat-review-pty kill-server",
+            "exit",
+            "",
+        ])
+        pty = run(*interactive, check=False, input_text=commands)
+        assert pty.returncode == 0, f"interactive PTY login failed: {pty.stdout}\n{pty.stderr}"
+        assert "DCA_PTY_UID_1000_/dev/pts/" in pty.stdout, (
+            f"PTY login did not start as dev: {pty.stdout}"
+        )
+        assert "DCA_TMUX_review" in pty.stdout, "tmux failed in interactive SSH"
         assert run(*client(wrong_key), "true", check=False).returncode != 0
         no_key = client()
         del no_key[3:5]
@@ -168,6 +189,10 @@ def ssh_checks(directory):
             assert policy in config, f"effective SSH policy missing: {policy}"
         key_path = "/etc/ssh/dockercat-hostkeys/ssh_host_ed25519_key.pub"
         host_identity = compose("exec", "-T", "agent", "cat", key_path).stdout
+        compose("up", "-d", "--no-build", "--force-recreate")
+        assert compose("exec", "-T", "agent", "cat", key_path).stdout == host_identity
+        # A missing public sidecar must be recovered from the same private key.
+        compose("exec", "-T", "-u", "root", "agent", "rm", key_path)
         compose("up", "-d", "--no-build", "--force-recreate")
         assert compose("exec", "-T", "agent", "cat", key_path).stdout == host_identity
         # Exercise a real local callback-shaped connection without provider credentials.
@@ -207,7 +232,8 @@ def ssh_checks(directory):
         result = run(*remote, check=False)
         assert result.returncode != 0 and "remote port forwarding failed" in result.stderr
         # Supply a real local agent so -A actually requests forwarding.
-        agent_socket = directory / "client-agent.sock"
+        # Keep the AF_UNIX address short even when checkout paths are long.
+        agent_socket = Path("/tmp") / f"dca-agent-{uuid.uuid4().hex[:12]}.sock"
         with tempfile.TemporaryFile() as agent_log:
             agent = subprocess.Popen(["ssh-agent", "-D", "-a", str(agent_socket)], stdout=agent_log, stderr=agent_log)
             try:
@@ -223,7 +249,8 @@ def ssh_checks(directory):
             finally:
                 agent.terminate()
                 agent.wait(timeout=10)
-        print("PASS SSH: dev key login, missing/wrong-key/password/root denial, effective restrictions, host-key persistence, restricted synthetic callback and agent denial")
+                agent_socket.unlink(missing_ok=True)
+        print("PASS SSH: interactive PTY/tmux and command login as dev, auth denials, effective restrictions, host-key persistence, restricted synthetic callback and agent denial")
 
 
 if __name__ == "__main__":

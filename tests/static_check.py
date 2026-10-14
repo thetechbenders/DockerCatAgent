@@ -34,9 +34,16 @@ def check() -> None:
     assert '(( port < 1024 || port > 65535 ))' in entry
     assert '^[1-9][0-9]{3,4}$' in entry, "bound decimal port parsing before shell arithmetic"
     assert '! -f /home/dev/.ssh/authorized_keys' in entry
+    assert 'chmod 0700 /home/dev/.ssh' not in entry, 'root must not chmod a user-controlled path'
     for overlay in (ssh, ro, rw):
         assert "create_host_path: false" in overlay, "bind sources must already exist"
-    assert "gpg --batch --show-keys --with-colons" in dockerfile
+    assert "dockercat-verify-signing-key" in dockerfile
+    signing_checker = read("scripts/verify-signing-key.sh")
+    assert "gpg --batch --show-keys --with-colons" in signing_checker
+    for capability in ("AUDIT_WRITE", "SYS_CHROOT", "DAC_READ_SEARCH"):
+        assert capability in ssh, f"SSH capability missing: {capability}"
+    for capability in ("NET_BIND_SERVICE", "FOWNER", "DAC_OVERRIDE"):
+        assert f"- {capability}" not in ssh, f"unnecessary SSH capability: {capability}"
     assert "31DDDE24DDFAB679F42D7BD2BAA929FF1A7ECACE" in dockerfile
     assert "USER dev" in dockerfile
     assert "docker compose down -v" in read("docs/installation.md"), "document destructive risk"

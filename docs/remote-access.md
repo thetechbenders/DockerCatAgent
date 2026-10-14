@@ -4,7 +4,7 @@ SSH is optional. The default Compose service publishes no ports. Enabling SSH ru
 
 ## Authorized keys and loopback binding
 
-Create a dedicated host file containing the **public** keys you authorize. Never copy private keys into the image, container or repository. Its parent directories and file must not be writable by unrelated users; use an operator-owned file with mode `0600`, and ensure SSH's strict ownership checks are satisfied. If the operator's host UID is neither root nor 1000, verify the bind file's ownership with the effective daemon; use a dedicated appropriately owned file rather than weakening strict checks.
+Create a dedicated host file containing the **public** keys you authorize. Never copy private keys into the image, container or repository. Its parent directories and file must not be writable by unrelated users. With this container's non-root SSH session, use a file **owned by container UID 1000 with mode `0600`**, or **owned by root with mode `0644`** (it contains public keys only). A root-owned `0600` file is unreadable by `dev` and fails login. On user-namespaced/shifted-UID hosts, verify ownership as seen inside the container. Do not disable `StrictModes` or chmod an entire host directory.
 
 Set these non-secret values in private `.env` on the Docker host:
 
@@ -15,7 +15,7 @@ SSH_PORT=2222
 OAUTH_CALLBACK_PORT=8765
 ```
 
-`SSH_AUTHORIZED_KEYS_FILE` must already be a regular nonempty file, not a directory. From the complete checkout:
+`SSH_AUTHORIZED_KEYS_FILE` must already be a regular nonempty file, not a directory. A root-managed example is `sudo install -o root -g root -m 0644 /path/to/approved/authorized_keys /absolute/path/to/authorized_keys`, after inspecting the contents. From the complete checkout:
 
 ```sh
 docker compose -f compose.yml -f compose.ssh.yml config -q
@@ -40,7 +40,7 @@ docker compose -f compose.yml -f compose.ssh.yml exec -T -u root agent \
   ssh-keygen -lf /etc/ssh/dockercat-hostkeys/ssh_host_ed25519_key.pub
 ```
 
-Recreate the container and confirm the fingerprint stays the same. If a client reports changed identity, stop and confirm the Docker endpoint, Compose project and actual key before altering `known_hosts`. Do not automatically suppress host-key checking. Replacing authorized public keys changes who can log in; it is separate from rotating the server's host key. Make changes through the protected host file, verify new access, and retire old access deliberately.
+Recreate the container and confirm the fingerprint stays the same. If a persisted host private key exists but its `.pub` sidecar is missing, startup recreates the public key without changing the server identity. If a client reports changed identity, stop and confirm the Docker endpoint, Compose project and actual key before altering `known_hosts`. Do not automatically suppress host-key checking. Replacing authorized public keys changes who can log in; it is separate from rotating the server's host key. Make changes through the protected host file, verify new access, and retire old access deliberately.
 
 ## VPN and remote clients
 
@@ -77,11 +77,11 @@ ssh -N -o ExitOnForwardFailure=yes -L 127.0.0.1:8765:localhost:8765 \
 
 For remote access replace the final host with the selected trusted Docker-host address. The first `127.0.0.1:8765` binds the **client's** listener privately; the `localhost:8765` destination is resolved inside the container. Use the same port for the MCP client's callback configuration, `.env` and tunnel. Use a canonical decimal integer from 1024 through 65535, without leading zeroes; other forms are rejected by startup validation.
 
-Run the provider's OAuth flow in a second authenticated `dev` shell. Leave the tunnel active until completion, then close it. A successful tunnel command only proves a local listener was created; it does not prove that the provider accepted a redirect or that a container callback listener exists. `ExitOnForwardFailure` does not prove destination acceptance before a connection is attempted. Account-holder validation of Mem and Claude authentication remains separate.
+Claude account/subscription login may support a paste-code flow without a tunnel. MCP OAuth may instead require a loopback callback, or offer a paste-redirect fallback; behavior varies with Claude and provider versions. Use the forwarding tunnel only when the selected flow requires it. Run the provider's OAuth flow in a second authenticated `dev` shell. Leave the tunnel active until completion, then close it. A successful tunnel command only proves a local listener was created; it does not prove that the provider accepted a redirect or that a container callback listener exists. `ExitOnForwardFailure` does not prove destination acceptance before a connection is attempted. Account-holder validation of Mem and Claude authentication remains separate.
 
 ## Effective configuration and troubleshooting
 
-On the Docker host, inspect the generated runtime configuration:
+On the Docker host, inspect the generated runtime configuration. **SSH mode runs its daemon entrypoint as root**: use `docker compose ... exec -u dev agent` for normal development commands. A bare `exec` may run as root and leave root-owned files in the persistent home. Use `-u root` only for intentional maintenance:
 
 ```sh
 docker compose -f compose.yml -f compose.ssh.yml exec -T -u root agent \
