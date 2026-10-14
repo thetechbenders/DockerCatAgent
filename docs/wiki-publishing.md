@@ -16,47 +16,19 @@ The source-tree links use `../docs/` and sibling `.md` filenames for repository 
 
 ## Prepare an export without publishing
 
-After choosing the reviewed source SHA, run the following in Bash from a clean complete source checkout. Replace the sample `REVIEWED_COMMIT_SHA` with the actual approved commit, not a branch name. This creates only temporary local files:
+A reviewed source commit must be **merged and approved** before its content is published. The exporter reads the exact Git commit, not an uncommitted working tree or moving branch. From a complete checkout, provide the **full 40-character commit SHA** approved for publication:
 
 ```bash
-set -euo pipefail
-approved_ref='REVIEWED_COMMIT_SHA'
-git cat-file -e "$approved_ref^{commit}"
-staging_dir="$(mktemp -d)"
-git archive "$approved_ref" wiki | tar -x -C "$staging_dir"
-python3 - "$staging_dir" "$approved_ref" <<'PYTHON'
-from pathlib import Path
-import re
-import sys
-
-stage = Path(sys.argv[1])
-source_sha = sys.argv[2]
-if not re.fullmatch(r"[0-9a-f]{40}", source_sha):
-    raise SystemExit("Use the full approved commit SHA")
-source_url = f"https://github.com/thetechbenders/DockerCatAgent/blob/{source_sha}/"
-wiki_url = "https://github.com/thetechbenders/DockerCatAgent/wiki/"
-output = stage / "export"
-output.mkdir()
-
-def rewrite(match):
-    target = match.group(1)
-    if target.startswith("../"):
-        target = source_url + target[3:]
-    elif ".md" in target and "/" not in target.split("#", 1)[0]:
-        page, _, anchor = target.partition("#")
-        target = wiki_url + page.removesuffix(".md")
-        if anchor:
-            target += "#" + anchor
-    return "](" + target + ")"
-
-for page in (stage / "wiki").glob("*.md"):
-    text = re.sub(r"\]\(([^)]+)\)", rewrite, page.read_text())
-    (output / page.name).write_text(text)
-print(f"Prepared {len(list(output.glob('*.md')))} pages in {output}")
-PYTHON
+git fetch origin main
+approved_sha="$(git rev-parse --verify origin/main^{commit})"
+python3 scripts/export-wiki.py --ref "$approved_sha" --output ./wiki-export
 ```
 
-Inspect the export: sibling navigation, sidebar, canonical links, code formatting and source SHA. The exporter intentionally handles this wiki's simple inline Markdown links; new link formats need review before use. No repository file, wiki remote or production service is changed by export.
+`wiki-export/` must not already exist. The script validates source links against the approved Git tree, rewrites repository-relative canonical links to permalinks at the approved SHA, rewrites cross-wiki links into wiki page URLs, and refuses missing destinations. The export contains the 11 Markdown pages plus `manifest.json` with the source SHA and content hashes. The manifest is **review evidence only** and must not be copied into the public wiki repository.
+
+Before publishing, inspect each generated page and its links, run `python3 -m unittest discover -s tests -p 'test_wiki_export.py'`, and compare the manifest against the approved commit. Exporting does **not** clone, edit or push the wiki. If the wiki remote has changed, review conflicts first rather than forcing a blind mirror.
+
+**The merged foundation commit** `7906169027df61a307f4c0cacf11273517ea0495` is a historical baseline, not an automatic publishing target. For the post-merge wiki documentation corrections, use the new **reviewed and merged** source commit rather than that older baseline.
 
 ## Review and synchronize the separate repository
 

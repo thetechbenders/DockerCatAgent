@@ -1,6 +1,6 @@
 # Contributing
 
-DockerCatAgent's foundation is under review in [draft PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1). Read the [roadmap](ROADMAP.md), [development guide](docs/development.md), and [existing issues](https://github.com/thetechbenders/DockerCatAgent/issues) before starting. An implemented review-branch feature may still lack account-holder or hardware acceptance.
+DockerCatAgent's initial foundation was merged into `main` through [PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1), but the product is not released. Read the [roadmap](ROADMAP.md), [development guide](docs/development.md), and [existing issues](https://github.com/thetechbenders/DockerCatAgent/issues) before starting. An implemented review-branch feature may still lack account-holder or hardware acceptance.
 
 No software license or contributor licensing policy has been approved. See [#6](https://github.com/thetechbenders/DockerCatAgent/issues/6); do not assume redistribution rights or add third-party code without resolving its licensing requirements.
 

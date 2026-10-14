@@ -31,4 +31,4 @@ The [roadmap](../ROADMAP.md), [contribution guide](../CONTRIBUTING.md) and [secu
 - **Manual acceptance** means a named host/account scenario was actually exercised and recorded.
 - **Deployment** requires a real operational environment; CI does not establish one.
 
-Read exact-head CI and the audit record for current evidence. No release, registry image or production deployment is implied by this documentation.
+Read exact-head CI and the audit record for scoped evidence; the audit includes historical runs from before the independent SSH remediation. No release, registry image or production deployment is implied by this documentation.

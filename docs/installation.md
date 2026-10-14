@@ -1,6 +1,6 @@
 # Installation and first session
 
-DockerCatAgent is a foundation under review, not a published image or production release. Use the [active draft PR](https://github.com/thetechbenders/DockerCatAgent/pull/1) and [validation guide](validation.md) to distinguish build evidence from host and account acceptance.
+DockerCatAgent's foundation source is merged into `main`, but there is no published image, production release, or completed host/account acceptance. See [merged PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1) and the [validation guide](validation.md) for implementation evidence and remaining checks.
 
 ## Requirements
 
@@ -13,10 +13,10 @@ AMD64 build evidence does not establish ARM64 hardware support. See [ARM64 accep
 
 ## Obtain the full build context
 
-Until PR #1 is reviewed and merged, the foundation is on its feature branch. On the Docker host:
+Clone the current source from `main` on the Docker host:
 
 ```sh
-git clone --branch feat/claude-docker-foundation https://github.com/thetechbenders/DockerCatAgent.git
+git clone --branch main https://github.com/thetechbenders/DockerCatAgent.git
 cd DockerCatAgent
 cp .env.example .env
 docker compose version

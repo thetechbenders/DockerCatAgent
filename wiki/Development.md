@@ -18,6 +18,6 @@ Start with the [development guide](../docs/development.md) and [contribution gui
 
 CI must use harmless fixtures without personal Claude/Mem secrets. Static checks and version output cannot stand in for real OAuth, host or hardware acceptance. Inspect the run's exact head SHA and resolve failures/warnings before claiming success.
 
-The foundation PR remains reviewable; green CI authorizes neither merging nor release. No license has been selected, and any later distribution requires owner decisions.
+The foundation source was merged through [PR #1](https://github.com/thetechbenders/DockerCatAgent/pull/1); green CI does not establish product acceptance or authorize a release. No license has been selected, and distribution still requires an owner decision.
 
 [Documentation home](Home.md).

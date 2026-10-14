@@ -1,6 +1,8 @@
 name: Foundation CI
 on:
   pull_request:
+  push:
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -24,6 +26,23 @@ jobs:
         run: python3 tests/static_check.py
       - name: Signing-key trust regression
         run: bash tests/signing-key-check.sh
+      - name: Wiki export regression
+        run: python3 -m unittest discover -s tests -p 'test_wiki_export.py'
+      - name: Export and validate current wiki source
+        run: |
+          wiki_preview="$(mktemp -d)"
+          rmdir "$wiki_preview"
+          trap 'rm -rf -- "$wiki_preview"' EXIT
+          python3 scripts/export-wiki.py --ref "$(git rev-parse HEAD)" --output "$wiki_preview"
+          python3 - "$wiki_preview" <<'PY'
+          import json
+          from pathlib import Path
+          import sys
+          output = Path(sys.argv[1])
+          manifest = json.loads((output / "manifest.json").read_text())
+          assert len(manifest["pages"]) == 11, "Expected all 11 reviewed wiki pages"
+          assert all((output / name).is_file() for name in manifest["pages"])
+          PY
       - name: Compose configuration
         run: |
           docker compose -f compose.yml config -q
