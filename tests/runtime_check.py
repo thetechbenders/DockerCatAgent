@@ -155,7 +155,7 @@ def ssh_checks(directory):
         # A remote command runs over an SSH exec channel. An actual interactive
         # PTY login exercises a different sshd/audit path and was previously broken.
         interactive = client()
-        interactive[-1:-1] = ["-tt"]
+        interactive[-1:-1] = ["-tt", "-vvv"]
         commands = "\n".join([
             "set -e",
             "test -t 0 && test -t 1",
@@ -169,7 +169,10 @@ def ssh_checks(directory):
             "",
         ])
         pty = run(*interactive, check=False, input_text=commands)
-        assert pty.returncode == 0, f"interactive PTY login failed: {pty.stdout}\n{pty.stderr}"
+        assert pty.returncode == 0, (
+            f"interactive PTY login rc={pty.returncode}: {pty.stdout}\n{pty.stderr}\n"
+            f"sshd logs: {compose('logs', '--no-color').stdout}"
+        )
         assert "DCA_PTY_UID_1000_/dev/pts/" in pty.stdout, (
             f"PTY login did not start as dev: {pty.stdout}"
         )
