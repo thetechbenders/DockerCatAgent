@@ -1,0 +1,23 @@
+name: Feature proposal
+description: Suggest a scoped enhancement or optional integration
+body:
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Problem and use case
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Security, portability and maintenance impact
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Testable acceptance criteria

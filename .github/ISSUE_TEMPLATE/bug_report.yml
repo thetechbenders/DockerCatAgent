@@ -1,0 +1,29 @@
+name: Bug report
+description: Report a reproducible DockerCatAgent defect
+body:
+  - type: markdown
+    attributes:
+      value: "Redact tokens, private keys, personal paths, and OAuth callback URLs."
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Expected versus actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Sanitized environment
+      description: Docker Engine/Compose versions, CPU architecture, overlays, Claude version

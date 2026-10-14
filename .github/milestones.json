@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Foundation",
+    "description": "Secure, reproducible Docker/Compose baseline with verified build, persistence and basic integration behavior."
+  },
+  {
+    "title": "Access & Reliability",
+    "description": "SSH regression coverage, recovery, backup and host portability."
+  },
+  {
+    "title": "Developer Experience",
+    "description": "Operator diagnostics, client guides, modular tooling and wiki polish."
+  },
+  {
+    "title": "Exploration",
+    "description": "Uncommitted proposals requiring owner review before implementation."
+  }
+]
