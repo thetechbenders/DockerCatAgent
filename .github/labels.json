@@ -1,0 +1,107 @@
+[
+  {
+    "name": "type: bug",
+    "color": "D73A4A",
+    "description": "Broken behavior or regression"
+  },
+  {
+    "name": "type: enhancement",
+    "color": "A2EEEF",
+    "description": "New capability or improvement"
+  },
+  {
+    "name": "type: documentation",
+    "color": "0075CA",
+    "description": "User or maintainer documentation"
+  },
+  {
+    "name": "type: security",
+    "color": "B60205",
+    "description": "Security-sensitive work; do not publish vulnerabilities"
+  },
+  {
+    "name": "type: testing",
+    "color": "1D76DB",
+    "description": "Validation and CI"
+  },
+  {
+    "name": "area: container",
+    "color": "5319E7",
+    "description": "Docker image and runtime"
+  },
+  {
+    "name": "area: remote-access",
+    "color": "6F42C1",
+    "description": "SSH, tmux, forwarding"
+  },
+  {
+    "name": "area: integrations",
+    "color": "0E8A16",
+    "description": "Obsidian, Mem, external tools"
+  },
+  {
+    "name": "area: docs",
+    "color": "0052CC",
+    "description": "Guides and wiki"
+  },
+  {
+    "name": "area: devex",
+    "color": "FBCA04",
+    "description": "Developer/operator experience"
+  },
+  {
+    "name": "priority: P0",
+    "color": "B60205",
+    "description": "Blocking safety, security, or baseline usability"
+  },
+  {
+    "name": "priority: P1",
+    "color": "D93F0B",
+    "description": "High priority; next planned milestone"
+  },
+  {
+    "name": "priority: P2",
+    "color": "FBCA04",
+    "description": "Useful when capacity permits"
+  },
+  {
+    "name": "priority: P3",
+    "color": "C2E0C6",
+    "description": "Exploratory or long-term"
+  },
+  {
+    "name": "status: needs-triage",
+    "color": "EDEDED",
+    "description": "Requires validation or owner decision"
+  },
+  {
+    "name": "status: ready",
+    "color": "0E8A16",
+    "description": "Scoped and actionable"
+  },
+  {
+    "name": "status: blocked",
+    "color": "B60205",
+    "description": "Waiting on blocker"
+  },
+  {
+    "name": "status: needs-validation",
+    "color": "FEF2C0",
+    "description": "Implementation exists; evidence missing"
+  },
+  {
+    "name": "good first issue",
+    "color": "7057FF",
+    "description": "Good for newcomers"
+  },
+  {
+    "name": "help wanted",
+    "color": "008672",
+    "description": "Extra attention is needed"
+  },
+  {
+    "name": "breaking change",
+    "color": "B60205",
+    "description": "Requires migration/compatibility review"
+  }
+]

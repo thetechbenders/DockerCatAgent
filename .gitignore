@@ -1,0 +1,13 @@
+.env
+.env.*
+!.env.example
+secrets/
+*.pem
+*.key
+id_*
+authorized_keys
+__pycache__/
+.pytest_cache/
+.DS_Store
+.vscode/
+.idea/

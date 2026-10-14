@@ -1,0 +1,18 @@
+[
+  {
+    "title": "Foundation",
+    "description": "Outcome: an initial usable Docker/Compose CLI product with non-root defaults, persistent state, baseline security and accurate operating docs. Complete when clean build, default/optional runtime controls, state recreation, ARM64/Portainer compatibility and consented authentication acceptance have evidence; green CI alone is insufficient."
+  },
+  {
+    "title": "Access & Reliability",
+    "description": "Outcome: recoverable state and a maintainable security posture. Complete when credential-safe encrypted backup/restore and migration drills, SSH least-privilege review, dependency reproducibility/provenance and supply-chain update procedures have reviewed evidence."
+  },
+  {
+    "title": "Developer Experience",
+    "description": "Outcome: operators and contributors can diagnose, customize and use the environment safely. Complete when privacy-preserving diagnostics, optional toolchain/MCP recipes, reviewed documentation/wiki maintenance and remote-terminal client guidance meet their acceptance criteria."
+  },
+  {
+    "title": "Exploration",
+    "description": "Outcome: explicit architectural and product decisions on future capabilities. Complete when assigned proposals have compatibility/security/maintenance assessments and recorded go/no-go decisions. No implementation, release or deployment is implied."
+  }
+]

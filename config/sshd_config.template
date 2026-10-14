@@ -1,0 +1,28 @@
+Port 2222
+AddressFamily inet
+ListenAddress 0.0.0.0
+HostKey /etc/ssh/dockercat-hostkeys/ssh_host_ed25519_key
+PidFile /run/sshd-dockercat.pid
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+ChallengeResponseAuthentication no
+PermitRootLogin no
+PubkeyAuthentication yes
+AuthenticationMethods publickey
+AuthorizedKeysFile /home/dev/.ssh/authorized_keys
+AllowUsers dev
+PermitEmptyPasswords no
+UsePAM no
+PermitUserEnvironment no
+StrictModes yes
+X11Forwarding no
+AllowAgentForwarding no
+AllowStreamLocalForwarding no
+AllowTcpForwarding local
+PermitOpen localhost:@OAUTH_CALLBACK_PORT@ 127.0.0.1:@OAUTH_CALLBACK_PORT@
+GatewayPorts no
+PermitTunnel no
+PermitTTY yes
+MaxAuthTries 3
+LogLevel VERBOSE
+Subsystem sftp internal-sftp

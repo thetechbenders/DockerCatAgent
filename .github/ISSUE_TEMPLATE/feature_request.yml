@@ -1,0 +1,39 @@
+name: Feature proposal
+description: Suggest a scoped enhancement or optional integration
+labels: ["type: enhancement", "status: needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Check ROADMAP.md and existing open/closed issues before proposing work. A roadmap candidate is not an implementation commitment. Keep private data and credentials out of examples."
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Problem and use case
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed behavior
+      description: Describe the outcome and boundaries. Explain whether this belongs in the base environment or an explicit optional profile.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: Security, portability and maintenance impact
+      description: Consider filesystem/network access, credentials, provider scopes, upstream distribution/licensing, resource costs, and ongoing updates.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Testable acceptance criteria
+      description: State observable outcomes and distinguish implementation checks from account-holder or hardware validation.
+    validations:
+      required: true
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Constraints, dependencies, and alternatives
+      description: Link actual dependencies or overlapping issues, identify owner decisions, and suggest the appropriate roadmap milestone. Avoid assumed blockers.

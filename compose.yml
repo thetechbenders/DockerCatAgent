@@ -1,0 +1,34 @@
+name: dockercatagent
+services:
+  agent:
+    build:
+      context: .
+      args:
+        CLAUDE_CHANNEL: ${CLAUDE_CHANNEL:-stable}
+    image: dockercatagent:local
+    user: "1000:1000"
+    working_dir: /workspace
+    stdin_open: true
+    tty: true
+    environment:
+      HOME: /home/dev
+      TERM: xterm-256color
+    volumes:
+      - workspace:/workspace
+      - home:/home/dev
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: ${CONTAINER_PIDS_LIMIT:-512}
+    mem_limit: ${CONTAINER_MEMORY_LIMIT:-4g}
+    cpus: ${CONTAINER_CPUS:-2}
+    healthcheck:
+      test: ["CMD", "/usr/local/bin/dockercat-healthcheck"]
+      interval: 30s
+      timeout: 10s
+      start_period: 20s
+      retries: 3
+volumes:
+  workspace:
+  home:

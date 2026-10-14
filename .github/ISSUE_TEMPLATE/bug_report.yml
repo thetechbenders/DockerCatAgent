@@ -1,0 +1,43 @@
+name: Bug report
+description: Report a reproducible DockerCatAgent defect
+labels: ["type: bug", "status: needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: "Search open and closed issues first. Redact tokens, private keys, personal paths, vault content, and OAuth callback URLs. Report vulnerabilities privately using SECURITY.md."
+  - type: input
+    id: summary
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: How to reproduce
+      description: Include commands and enabled Compose overlays. State whether this is a static check, synthetic runtime test, or actual account/host workflow.
+    validations:
+      required: true
+  - type: textarea
+    id: results
+    attributes:
+      label: Expected versus actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Sanitized environment
+      description: Source branch and commit; Docker Engine/Compose and Claude versions; CPU architecture; host/client type; relevant overlays. No private paths or account identifiers.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Sanitized evidence and impact
+      description: Relevant errors, affected data or workflow, and workarounds. Do not attach secret-bearing logs or personal files.
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Expected verification
+      description: What concrete result would show the defect is fixed? Link related or canonical issues when useful.

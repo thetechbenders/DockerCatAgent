@@ -1,0 +1,12 @@
+.git
+.github
+.env
+.env.*
+!.env.example
+secrets
+docs
+tests
+*.pem
+*.key
+id_*
+README.md

@@ -1,0 +1,10 @@
+# Optional read-only vault access.
+services:
+  agent:
+    volumes:
+      - type: bind
+        source: ${OBSIDIAN_VAULT_PATH:?Set OBSIDIAN_VAULT_PATH}
+        target: /vault
+        read_only: true
+        bind:
+          create_host_path: false
