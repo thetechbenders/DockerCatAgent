@@ -14,6 +14,11 @@ if [[ ! "$port" =~ ^[1-9][0-9]{3,4}$ ]] || (( port < 1024 || port > 65535 )); th
 fi
 keys=/etc/ssh/dockercat-hostkeys
 mkdir -p "$keys" /run/sshd
+# Minimal Debian containers may omit utmp. OpenSSH records PTY logins there;
+# keep it runtime-only and never world-writable. Do not replace existing data.
+if [[ ! -e /run/utmp ]]; then
+  install -o root -g utmp -m 0664 /dev/null /run/utmp
+fi
 chmod 0700 "$keys"
 if [[ ! -f "$keys/ssh_host_ed25519_key" ]]; then
   (umask 077; ssh-keygen -q -t ed25519 -N '' -f "$keys/ssh_host_ed25519_key")
