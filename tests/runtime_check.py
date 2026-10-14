@@ -4,9 +4,13 @@ Uses disposable Compose projects, volumes, SSH keys, and a synthetic vault.
 Does not validate account OAuth, hardware compatibility, or production deployment.
 """
 from contextlib import contextmanager
+import errno
 import json
 import os
 from pathlib import Path
+import pty
+import select
+import signal
 import socket
 import subprocess
 import tempfile
@@ -24,6 +28,57 @@ def run(*args, check=True, env=None, input_text=None):
     if check and result.returncode:
         raise AssertionError(f"{' '.join(args)} failed:\n{result.stdout}{result.stderr}")
     return result
+
+
+def interactive_client(args, commands, timeout=20):
+    """Run the SSH client with a real controlling PTY, not piped fake input.
+
+    Send commands after the first login prompt. Keep the local terminal open
+    until SSH exits so remote shell exit status is not disrupted by pipe EOF.
+    All credentials and server processes are disposable test fixtures.
+    """
+    pid, master = pty.fork()
+    if pid == 0:
+        os.chdir(ROOT)
+        os.execvp(args[0], args)
+
+    output = bytearray()
+    submitted = False
+    completed = False
+    deadline = time.monotonic() + timeout
+    try:
+        while time.monotonic() < deadline:
+            ready, _, _ = select.select([master], [], [], 0.15)
+            if ready:
+                try:
+                    chunk = os.read(master, 65536)
+                except OSError as error:
+                    if error.errno == errno.EIO:
+                        completed = True
+                        break
+                    raise
+                if not chunk:
+                    completed = True
+                    break
+                output.extend(chunk)
+            if not submitted and b"dev@" in output and b"$ " in output:
+                os.write(master, commands.encode())
+                submitted = True
+        if not completed:
+            raise AssertionError("interactive SSH timed out; output: " +
+                                 output.decode(errors="replace"))
+    finally:
+        os.close(master)
+        if not completed:
+            os.kill(pid, signal.SIGTERM)
+        _, status = os.waitpid(pid, 0)
+    if not submitted:
+        raise AssertionError("SSH never presented interactive dev login prompt: " +
+                             output.decode(errors="replace"))
+    return subprocess.CompletedProcess(
+        args, os.waitstatus_to_exitcode(status),
+        stdout=output.decode(errors="replace"), stderr=""
+    )
 
 
 def free_port():
@@ -155,7 +210,7 @@ def ssh_checks(directory):
         # A remote command runs over an SSH exec channel. An actual interactive
         # PTY login exercises a different sshd/audit path and was previously broken.
         interactive = client()
-        interactive[-1:-1] = ["-tt", "-vvv"]
+        interactive[-1:-1] = ["-tt"]
         commands = "\n".join([
             "set -e",
             "test -t 0 && test -t 1",
@@ -168,7 +223,7 @@ def ssh_checks(directory):
             "exit 0",
             "",
         ])
-        pty = run(*interactive, check=False, input_text=commands)
+        pty = interactive_client(interactive, commands)
         assert pty.returncode == 0, (
             f"interactive PTY login rc={pty.returncode}: {pty.stdout}\n{pty.stderr}\n"
             f"sshd logs: {compose('logs', '--no-color').stdout}"
