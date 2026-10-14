@@ -212,11 +212,12 @@ def ssh_checks(directory):
         interactive = client()
         interactive[-1:-1] = ["-tt"]
         commands = "\n".join([
-            "set -e",
-            "test -t 0 && test -t 1",
+            # Explicit failure branches preserve the interactive login shell's
+            # logout behavior; 'set -e' can make Debian .bash_logout return 1.
+            "test -t 0 && test -t 1 || exit 90",
             'printf "DCA_PTY_UID_%s_%s\\n" "$(id -u)" "$(tty)"',
-            "tmux -L dockercat-review-pty new-session -d -s review",
-            "tmux -L dockercat-review-pty has-session -t review",
+            "tmux -L dockercat-review-pty new-session -d -s review || exit 91",
+            "tmux -L dockercat-review-pty has-session -t review || exit 92",
             'printf "DCA_TMUX_%s\\n" "$(tmux -L dockercat-review-pty display-message -p -t review \u0027#S\u0027)"',
             "tmux -L dockercat-review-pty kill-server || true",
             'printf "DCA_PTY_DONE\\n"',
