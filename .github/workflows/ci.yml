@@ -1,0 +1,48 @@
+name: Foundation CI
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: foundation-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  static:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate shell syntax
+        run: bash -n scripts/*.sh
+      - name: Static policy tests
+        run: python3 tests/static_check.py
+      - name: Compose configuration
+        run: |
+          docker compose -f compose.yml config -q
+          SSH_AUTHORIZED_KEYS_FILE="$PWD/.env.example" docker compose -f compose.yml -f compose.ssh.yml config -q
+          OBSIDIAN_VAULT_PATH="$PWD/wiki" docker compose -f compose.yml -f compose.obsidian.yml config -q
+          OBSIDIAN_VAULT_PATH="$PWD/wiki" docker compose -f compose.yml -f compose.obsidian-write.yml config -q
+  build-smoke:
+    runs-on: ubuntu-latest
+    needs: static
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build image
+        run: docker compose build --pull
+      - name: Start container
+        run: docker compose up -d
+      - name: Basic smoke
+        run: docker compose exec -T -u dev agent bash -c 'claude --version && git --version && tmux -V && test -w /workspace && test -w /home/dev'
+      - name: Volume persistence across recreation
+        run: |
+          docker compose exec -T -u dev agent sh -c 'printf ok > /workspace/.persist-probe && printf ok > /home/dev/.persist-probe'
+          docker compose up -d --force-recreate
+          docker compose exec -T -u dev agent sh -c 'test "$(cat /workspace/.persist-probe)" = ok && test "$(cat /home/dev/.persist-probe)" = ok'
+      - name: Default exposure checks
+        run: |
+          test -z "$(docker compose port agent 2222 2>/dev/null || true)"
+          docker inspect "$(docker compose ps -q agent)" --format '{{json .HostConfig.Binds}}' | grep -v '/var/run/docker.sock'
+      - name: Shutdown (preserve volumes)
+        if: always()
+        run: docker compose down
