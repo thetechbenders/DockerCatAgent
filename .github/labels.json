@@ -92,12 +92,12 @@
   {
     "name": "good first issue",
     "color": "7057FF",
-    "description": "Suitable for onboarding"
+    "description": "Good for newcomers"
   },
   {
     "name": "help wanted",
     "color": "008672",
-    "description": "Contributions welcome"
+    "description": "Extra attention is needed"
   },
   {
     "name": "breaking change",
